@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-gcc -o main main.c
+gcc -o main main.c src/io.c
 
 ./main
 
