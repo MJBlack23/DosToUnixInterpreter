@@ -2,8 +2,7 @@
 #define IO_H
 
 void print_welcome();
-void print_prompt();
+int print_prompt(int pipe_fd[2]);
 void clear_screen();
-int run_command(char *args[]);
 
 #endif

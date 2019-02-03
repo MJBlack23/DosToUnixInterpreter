@@ -5,6 +5,7 @@
 
 #include "colors.h"
 #include "io.h"
+#include "exec.h"
 
 
 void print_welcome()
@@ -18,42 +19,34 @@ void print_welcome()
     printf("    > Enter a DOS command and it will be executed as a unix style command on your system.\n\n\n");
 }
 
-void print_prompt()
+int print_prompt(int pipe_fd[2])
 {
-    char *args[] = {"pwd"};
-    int status = run_command(args);
+    char *args[] = {"pwd", NULL};
+    int status = run_command(args, pipe_fd);
+    
     
     if (status > -1)
-        printf(" %s$%s ", KCYN, KNRM);
+    {
+        // read the results from the pipe into a character array
+        char cwd[100];
+        read(pipe_fd[0], cwd, 100);
+
+        // while the current character isn't a new line or NULL character
+        // output the character
+        int i = 0;
+        while (cwd[i] != '\n' && cwd[i] != '\0') {
+            putchar(cwd[i]);
+            ++i;
+        }
+        printf(" %s>%s ", KCYN, KNRM);
+        return 1;
+    }
+
+    return 0;
 }
 
-void clear_screen() {
-    char *args[] = {"clear", NULL};
-    run_command(args);
-}
-
-int run_command(char *args[])
+void clear_screen()
 {
-    char *command = args[0];
-    pid_t pid = fork();
-    int status;
-
-    switch(pid) {
-        case -1:
-            perror("Failed to fork a command");
-            perror(command);
-            exit(1);
-        case 0:
-            
-            execvp(command, args);
-    }
-
-    if (waitpid(pid, &status, 0) == -1)
-    {
-        return -1;
-    }
-    else
-    {
-        return status;
-    }
+    char *args[] = {"clear", NULL};
+    run_command(args, NULL);
 }
