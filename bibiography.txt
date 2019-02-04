@@ -5,3 +5,7 @@ http://man7.org/linux/man-pages/man3/getline.3.html
 
 
 https://stackoverflow.com/questions/122616/how-do-i-trim-leading-trailing-whitespace-in-a-standard-way
+
+https://www.tutorialspoint.com/c_standard_library/c_function_isspace.htm
+
+https://stackoverflow.com/questions/37538/how-do-i-determine-the-size-of-my-array-in-c

@@ -2,38 +2,55 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <ctype.h>
 
 // Local files
 #include "src/io.h"
 
-// temp
+int string_len(char *str)
+{
+    int len = 0;
+    while (str[len] != '\0')
+    {
+        ++len;
+    }
 
-#define NEW_LINE '\n';
+    return len;
+}
+
+char *string_reverse(char *str, int len)
+{
+    int i, end = len - 1;
+    char temp[len];
+    char *new_str = malloc(len);
+
+    for (i = 0; i < len; ++i)
+    {
+        temp[i] = str[end];
+        --end;
+    }
+    
+    // create a proper string with a null termination
+    temp[i] = '\0';
+
+    strcpy(new_str, temp);
+    return new_str;
+}
+
+char *left_trim(char *str) {
+    while (isspace((unsigned char) *str))
+    {
+        str++;
+    }
+
+    // strcpy(trimmed, str);
+
+    return str;
+}
 
 
-
-
-// void get_commands(char *input) {
-//     char *pch;
-//     pch = strtok(input, "&");
-
-//     while (pch != NULL)
-//     {
-//         int count = 0;
-//         for (int i = 0; i < strlen(pch); i += 1)
-//         {
-//             if (pch[i] != ' ')
-//             {
-//                 pch[count += 1] = pch[i];
-//             }
-//         }
-//         pch[count] = '\0';
-//         printf("%s\n", pch);
-//         pch = strtok(NULL, "&");
-//     }
-// }
-
-int main() {
+int main()
+{
     print_welcome();
 
     // create some global variables
@@ -42,14 +59,17 @@ int main() {
     ssize_t line_len; // signed size of object in memory
 
     int pipe_fd[2]; // file descriptor for the pipe to pass data back and forth
-
-    char *user_command = malloc(sizeof(char) * 0);
-
     // open a pipe to get input from the exec process
-    if (pipe(pipe_fd) == -1) {
+    if (pipe(pipe_fd) == -1)
+    {
         perror("Failed to open a pipe.");
         exit(1);
     }
+
+    // extracting a command
+    // char *user_command = malloc(sizeof(char) * 0);
+
+
 
     // print the initial prompt
     print_prompt(pipe_fd);
@@ -61,11 +81,24 @@ int main() {
         // extract command(s) from the line
         // int command_count = 1;
         // int *command_breaks = malloc(sizeof(int) * 0);
-        char *ptr = strtok(line, "&");
+        char *cmd_ptr = strtok(line, "&");
 
-        while (ptr != NULL) {
-            printf("%s\n", ptr);
-            ptr = strtok(NULL, "&");
+        while (cmd_ptr != NULL)
+        {
+            // strip whitespace at the begining and end
+            char *left_trimmed = left_trim(cmd_ptr);
+
+            // reverse string
+            char *reversed = string_reverse(left_trimmed, string_len(left_trimmed));
+
+            char *right_trimmed = left_trim(reversed);
+
+            char *command = string_reverse(right_trimmed, string_len(right_trimmed));
+
+            // temp printing stuff
+            printf("Command> |%s|\n", command);
+
+            cmd_ptr = strtok(NULL, "&");
         }
 
 
