@@ -2,11 +2,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <ctype.h>
 
 // Local files
 #include "src/io.h"
 #include "src/strings.h"
 
+#include "src/exec.h"
 
 int main()
 {
@@ -42,6 +44,42 @@ int main()
         {
             // strip whitespace at the begining and end
             char *command = right_trim(left_trim(cmd_ptr));
+
+            // get word count
+            int words = word_count(command);
+
+            int args[words];
+            int i = 0;
+            int last_space = 0;
+            int word_iter = 0;
+            while (command[i] != '\0')
+            {
+                if (isspace(command[i])) {
+                    char word[i];
+                    for (int id = 0; id < i; ++id) {
+                        word[id] = command[i - last_space];
+                    }
+                    args[word_iter] = *word;
+                    ++word_iter;
+                }
+                ++i;
+            }
+
+            int status = run_command(args, pipe_fd);
+
+            if (status > -1)
+            {
+                char cwd[1000];
+                read(pipe_fd[0], cwd, 1000);
+
+                int i = 0;
+                while(cwd[i] != '\0')
+                {
+                    putchar(cwd[i]);
+                    ++i;
+                }
+            }
+
 
             // temp printing stuff
             printf("Command> |%s|\n", command);

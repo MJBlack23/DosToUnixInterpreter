@@ -12,6 +12,21 @@ int string_len(char *str)
     return len;
 }
 
+int word_count(char *str)
+{
+    int iter = 0;
+    int spaces = 1;
+    while (str[iter] != '\0')
+    {
+        if (str[iter] == ' ')
+            spaces++;
+
+        ++iter;
+    }
+
+    return spaces;
+}
+
 char *string_reverse(char *str)
 {
     int len = string_len(str);
