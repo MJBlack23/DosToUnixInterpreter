@@ -18,8 +18,9 @@ int string_len(char *str)
     return len;
 }
 
-char *string_reverse(char *str, int len)
+char *string_reverse(char *str)
 {
+    int len = string_len(str);
     int i, end = len - 1;
     char temp[len];
     char *new_str = malloc(len);
@@ -46,6 +47,14 @@ char *left_trim(char *str) {
     // strcpy(trimmed, str);
 
     return str;
+}
+
+char *right_trim(char *str) {
+    char *reversed = string_reverse(str);
+
+    char *right_trimmed = left_trim(reversed);
+
+    return string_reverse(right_trimmed);
 }
 
 
@@ -86,14 +95,7 @@ int main()
         while (cmd_ptr != NULL)
         {
             // strip whitespace at the begining and end
-            char *left_trimmed = left_trim(cmd_ptr);
-
-            // reverse string
-            char *reversed = string_reverse(left_trimmed, string_len(left_trimmed));
-
-            char *right_trimmed = left_trim(reversed);
-
-            char *command = string_reverse(right_trimmed, string_len(right_trimmed));
+            char *command = right_trim(left_trim(cmd_ptr));
 
             // temp printing stuff
             printf("Command> |%s|\n", command);
