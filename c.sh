@@ -15,6 +15,7 @@ clean() {
 run() {
     compile
     ./target/main
+    clean
 }
 
 if [ "$cmd" = "compile" ]

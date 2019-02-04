@@ -10,13 +10,12 @@
 
 void print_welcome()
 {
-    clear_screen();
     printf("|================================================================================================|\n");
     printf(" Welcome to the DOS to UNIX command interpreter.\n");
     printf("  Created by Matt Black\n");
     printf("  CIS-570 Spring 2019\n");
     printf("  Usage:\n");
-    printf("    > Enter a DOS command and it will be executed as a unix style command on your system.\n\n\n");
+    printf("> Enter a DOS command and it will be executed as a unix style command on your system.\n\n\n");
 }
 
 int print_prompt(int pipe_fd[2])
@@ -47,6 +46,6 @@ int print_prompt(int pipe_fd[2])
 
 void clear_screen()
 {
-    char *args[] = {"clear", NULL};
-    run_command(args, NULL);
+    char *clear[] = {"clear", NULL};
+    execvp(clear[0], clear);
 }
