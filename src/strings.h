@@ -1,10 +1,8 @@
 #ifndef STRINGS_H
 #define STRINGS_H
 
-int string_len(char *str);
-int word_count(char *str);
-char *string_reverse(char *str);
-char *left_trim(char *str);
-char *right_trim(char *str);
+int word_count(char str[]);
+int left_trim(char str[]);
+int right_trim(char str[]);
 
 #endif

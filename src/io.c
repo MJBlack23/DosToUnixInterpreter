@@ -27,16 +27,14 @@ int print_prompt(int pipe_fd[2])
     if (status > -1)
     {
         // read the results from the pipe into a character array
-        char cwd[100];
-        read(pipe_fd[0], cwd, 100);
+        char read_buf[1];
+        // read the pipe into a readable buffer, and then output the content
+        // don't output the null character or a new line
+        while((read(pipe_fd[0], read_buf, 1)) > 0 && *read_buf != '\0' && *read_buf != '\n')
+            putchar(*read_buf);
 
         // while the current character isn't a new line or NULL character
         // output the character
-        int i = 0;
-        while (cwd[i] != '\n' && cwd[i] != '\0') {
-            putchar(cwd[i]);
-            ++i;
-        }
         printf(" %s>%s ", KCYN, KNRM);
         return 1;
     }

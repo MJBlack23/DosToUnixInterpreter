@@ -20,18 +20,17 @@ int main()
     size_t given_len = 0; // size of object in memory
     ssize_t line_len; // signed size of object in memory
 
-    int pipe_fd[2]; // file descriptor for the pipe to pass data back and forth
+    int prompt_fd[2]; // file descriptor for the pipe to pass data back and forth
     // open a pipe to get input from the exec process
-    if (pipe(pipe_fd) == -1)
+    if (pipe(prompt_fd) == -1)
     {
         perror("Failed to open a pipe.");
         exit(1);
     }
 
 
-
     // print the initial prompt
-    print_prompt(pipe_fd);
+    print_prompt(prompt_fd);
 
     // while the user hasn't input a terminating command
     while ((line_len = getline(&line, &given_len, stdin)) != -1) {
@@ -42,54 +41,44 @@ int main()
         // For each command delimited by an Ampersand
         while (cmd_ptr != NULL)
         {
+            
             // strip whitespace at the begining and end
-            char *command = right_trim(left_trim(cmd_ptr));
+            right_trim(cmd_ptr);
+            
+            left_trim(cmd_ptr);
+            
+            
 
-            // get word count
-            int words = word_count(command);
+            char *command[] = {cmd_ptr, NULL};
+            
+            int pipe_fd[2];
 
-            int args[words];
-            int i = 0;
-            int last_space = 0;
-            int word_iter = 0;
-            while (command[i] != '\0')
+            if (pipe(pipe_fd) == -1)
             {
-                if (isspace(command[i])) {
-                    char word[i];
-                    for (int id = 0; id < i; ++id) {
-                        word[id] = command[i - last_space];
-                    }
-                    args[word_iter] = *word;
-                    ++word_iter;
-                }
-                ++i;
+                perror("Failed to create pipe for command.");
+                exit(1);
             }
 
-            int status = run_command(args, pipe_fd);
+            int status = run_command(command, pipe_fd);
 
             if (status > -1)
             {
-                char cwd[1000];
-                read(pipe_fd[0], cwd, 1000);
-
-                int i = 0;
-                while(cwd[i] != '\0')
-                {
-                    putchar(cwd[i]);
-                    ++i;
-                }
+                char read_buf[1];
+                close(pipe_fd[1]);
+                while (read(pipe_fd[0], read_buf, 1) > 0 && *read_buf != '\0')
+                    putchar(*read_buf);
             }
 
 
             // temp printing stuff
-            printf("Command> |%s|\n", command);
+            // printf("Command> |%s|\n", command);
 
             cmd_ptr = strtok(NULL, "&");
         }
 
 
         // print new prompt
-        print_prompt(pipe_fd);
+        print_prompt(prompt_fd);
     }
     
     
