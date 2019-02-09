@@ -5,7 +5,7 @@ args=("$@")
 cmd=${args[0]}
 
 compile() {
-    gcc -o ./target/main main.c ./src/io.c ./src/exec.c ./src/strings.c
+    gcc -o ./target/main main.c ./src/io.c ./src/exec.c ./src/strings.c ./src/pipe.c
 }
 
 clean() {

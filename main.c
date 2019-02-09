@@ -7,6 +7,7 @@
 // Local files
 #include "src/io.h"
 #include "src/strings.h"
+#include "src/pipe.h"
 
 #include "src/exec.h"
 
@@ -22,11 +23,7 @@ int main()
 
     int prompt_fd[2]; // file descriptor for the pipe to pass data back and forth
     // open a pipe to get input from the exec process
-    if (pipe(prompt_fd) == -1)
-    {
-        perror("Failed to open a pipe.");
-        exit(1);
-    }
+    init_pipe(prompt_fd);
 
 
     // print the initial prompt
@@ -41,23 +38,16 @@ int main()
         // For each command delimited by an Ampersand
         while (cmd_ptr != NULL)
         {
-            
             // strip whitespace at the begining and end
             right_trim(cmd_ptr);
-            
             left_trim(cmd_ptr);
             
-            
-
+            // Create a NULL terminated command array
             char *command[] = {cmd_ptr, NULL};
             
+            // Create a new pipe 
             int pipe_fd[2];
-
-            if (pipe(pipe_fd) == -1)
-            {
-                perror("Failed to create pipe for command.");
-                exit(1);
-            }
+            init_pipe(pipe_fd);
 
             int status = run_command(command, pipe_fd);
 
